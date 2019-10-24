@@ -1,2 +1,2 @@
-# 6.867_Final_Project
+# DeepFrame
 RCNN for generating depth maps from video
