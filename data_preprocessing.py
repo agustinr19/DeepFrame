@@ -1,8 +1,12 @@
 import os
 import subprocess
-from pytube import YouTube 
+import Pillow as PIL
+import numpy as np
 
-CWD = os.getcwd() #current working directory
+from pytube import YouTube 
+from util import *
+
+CWD = os.getcwd() # current working directory
 
 def load_frames(frame_folder_path):
   """
@@ -14,7 +18,22 @@ def load_frames(frame_folder_path):
   Returns:
       Tensor of frame data
   """
-  pass
+  
+  # Reads all image files from specified directory
+  img_filepaths = []
+  for dirname, subdirs, files in os.walk(frame_folder_path):
+    img_filepaths += [os.path.join(dirname, f) for f in files if is_img_file(f)]
+  img_filepaths.sort()
+
+  # Converts image files to numpy vectors/tensors
+  img_data = []
+  for filepath in img_filepaths:
+    img_data.append(np.array(Image.open(filepath)))
+
+  # Merges all loaded image data
+  img_data = np.vstack(img_data)
+
+  return img_data
 
 def generate_depth_map(image_path):
   """
