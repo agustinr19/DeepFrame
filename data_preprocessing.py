@@ -28,7 +28,10 @@ def load_frames(frame_folder_path):
   # Converts image files to numpy vectors/tensors
   img_data = []
   for filepath in img_filepaths:
-    img_data.append(np.array(Image.open(filepath)))
+    try:
+      img_data.append(np.array(Image.open(filepath)))
+    except Exception as err:
+      print('Image import failed: '+filepath+", "+str(err))
 
   # Merges all loaded image data
   img_data = np.vstack(img_data)
