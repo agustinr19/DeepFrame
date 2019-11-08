@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import SceneKit
-import SwiftAssetsPickerController
 
 class PointCloudlViewController: UIViewController {
 

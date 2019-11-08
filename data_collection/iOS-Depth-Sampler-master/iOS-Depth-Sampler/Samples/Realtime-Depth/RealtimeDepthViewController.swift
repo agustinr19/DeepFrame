@@ -27,6 +27,9 @@ class RealtimeDepthViewController: UIViewController {
 
     private var videoImage: CIImage?
     
+    var gameTimer: Timer?
+    var index: Int = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,6 +47,7 @@ class RealtimeDepthViewController: UIViewController {
         videoCapture.syncedDataBufferHandler = { [weak self] videoPixelBuffer, depthData, face in
             guard let self = self else { return }
             
+            // LIVE VIDEO IMAGE
             self.videoImage = CIImage(cvPixelBuffer: videoPixelBuffer)
 
             var useDisparity: Bool = false
@@ -57,10 +61,26 @@ class RealtimeDepthViewController: UIViewController {
                 guard let depthData = useDisparity ? depthData?.convertToDisparity() : depthData else { return }
                 
                 guard let ciImage = depthData.depthDataMap.transformedImage(targetSize: self.currentDrawableSize, rotationAngle: 0) else { return }
+                
+                // DEPTH MAP
                 self.depthImage = applyHistoEq ? ciImage.applyingFilter("YUCIHistogramEqualization") : ciImage
+                
+                
             }
         }
         videoCapture.setDepthFilterEnabled(filterSwitch.isOn)
+        
+        // capture timer
+        gameTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            print("Number: \(self.index)")
+            self.index += 1
+            
+            // saves images
+            DispatchQueue.main.async {
+                self.saveImage(img_in: self.videoImage, filename: "test_video_\(self.index)")
+                self.saveImage(img_in: self.depthImage, filename: "test_depth_\(self.index)")
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -97,6 +117,23 @@ class RealtimeDepthViewController: UIViewController {
     
     @IBAction func filterSwitched(_ sender: UISwitch) {
         videoCapture.setDepthFilterEnabled(sender.isOn)
+    }
+    
+    // MARK: - Extra Functions
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
+    func saveImage(img_in: CIImage?, filename: String) {
+        if let img = img_in {
+            let image = UIImage(ciImage: img)
+            if let data = image.pngData() {
+                let filename = getDocumentsDirectory().appendingPathComponent(filename.appending(".png"))
+                try? data.write(to: filename)
+            }
+        }
     }
 }
 

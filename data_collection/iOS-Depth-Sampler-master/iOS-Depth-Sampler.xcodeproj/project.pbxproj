@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B4D7FEC5A6D1DAFCE88D110 /* Pods_iOS_Depth_Sampler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDB82C9008285D580EA95E40 /* Pods_iOS_Depth_Sampler.framework */; };
 		8A171F0B2148FE4100121E80 /* RealtimeDepthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A171F062148FE4100121E80 /* RealtimeDepthViewController.swift */; };
 		8A171F0C2148FE4100121E80 /* RealtimeDepth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A171F072148FE4100121E80 /* RealtimeDepth.storyboard */; };
 		8A171F13214905D400121E80 /* CVPixelBuffer+CIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A171F12214905D400121E80 /* CVPixelBuffer+CIImage.swift */; };
@@ -43,6 +42,9 @@
 		8AFD6516214B08EB0085F997 /* PointCloudViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFD6514214B08EB0085F997 /* PointCloudViewController.swift */; };
 		8AFD6517214B08EB0085F997 /* PointCloud.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AFD6515214B08EB0085F997 /* PointCloud.storyboard */; };
 		8AFD6519214B0CC80085F997 /* CIImage+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFD6518214B0CC80085F997 /* CIImage+Utils.swift */; };
+		FCDCE67423760F9A0049E375 /* AssetsPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDCE67223760F9A0049E375 /* AssetsPickerController.swift */; };
+		FCDCE67523760F9A0049E375 /* AssetsPickerGridController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDCE67323760F9A0049E375 /* AssetsPickerGridController.swift */; };
+		FCDCE67723760FAC0049E375 /* CheckMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDCE67623760FAC0049E375 /* CheckMarkView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,9 +86,9 @@
 		8AFD6514214B08EB0085F997 /* PointCloudViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointCloudViewController.swift; sourceTree = "<group>"; };
 		8AFD6515214B08EB0085F997 /* PointCloud.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PointCloud.storyboard; sourceTree = "<group>"; };
 		8AFD6518214B0CC80085F997 /* CIImage+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+Utils.swift"; sourceTree = "<group>"; };
-		8FA83CA5E0F8F1F5F2E5DF63 /* Pods-iOS-Depth-Sampler.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Depth-Sampler.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Depth-Sampler/Pods-iOS-Depth-Sampler.release.xcconfig"; sourceTree = "<group>"; };
-		DDC3399A5A9E8877FB64BCD8 /* Pods-iOS-Depth-Sampler.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Depth-Sampler.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Depth-Sampler/Pods-iOS-Depth-Sampler.debug.xcconfig"; sourceTree = "<group>"; };
-		FDB82C9008285D580EA95E40 /* Pods_iOS_Depth_Sampler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Depth_Sampler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCDCE67223760F9A0049E375 /* AssetsPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AssetsPickerController.swift; path = Pods/SwiftAssetsPickerController/SwiftAssetsPickerController/Sources/AssetsPickerController.swift; sourceTree = SOURCE_ROOT; };
+		FCDCE67323760F9A0049E375 /* AssetsPickerGridController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AssetsPickerGridController.swift; path = Pods/SwiftAssetsPickerController/SwiftAssetsPickerController/Sources/AssetsPickerGridController.swift; sourceTree = SOURCE_ROOT; };
+		FCDCE67623760FAC0049E375 /* CheckMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckMarkView.swift; path = Pods/CheckMarkView/CheckMarkView/Sources/CheckMarkView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,26 +96,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B4D7FEC5A6D1DAFCE88D110 /* Pods_iOS_Depth_Sampler.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2824CEA4531F10AD95165322 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				DDC3399A5A9E8877FB64BCD8 /* Pods-iOS-Depth-Sampler.debug.xcconfig */,
-				8FA83CA5E0F8F1F5F2E5DF63 /* Pods-iOS-Depth-Sampler.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		6ECE07E18B1808EB59C8741A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FDB82C9008285D580EA95E40 /* Pods_iOS_Depth_Sampler.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -186,7 +177,6 @@
 			children = (
 				8A702F96212A3BD3004039F7 /* iOS-Depth-Sampler */,
 				8A702F95212A3BD3004039F7 /* Products */,
-				2824CEA4531F10AD95165322 /* Pods */,
 				6ECE07E18B1808EB59C8741A /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -212,6 +202,9 @@
 				8AAF371021480D31006A551B /* RootViewCell.swift */,
 				8AAF371121480D32006A551B /* RootViewController.swift */,
 				8AAF371221480D32006A551B /* SampleDataSource.swift */,
+				FCDCE67623760FAC0049E375 /* CheckMarkView.swift */,
+				FCDCE67223760F9A0049E375 /* AssetsPickerController.swift */,
+				FCDCE67323760F9A0049E375 /* AssetsPickerGridController.swift */,
 				8A171F11214905A400121E80 /* Utils */,
 				8A702FA9212A3CDE004039F7 /* VideoCapture */,
 				8A3D1A74213E5F2F0061470F /* Renderer */,
@@ -275,11 +268,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A702FA6212A3BD5004039F7 /* Build configuration list for PBXNativeTarget "iOS-Depth-Sampler" */;
 			buildPhases = (
-				04E184A9F0C6982EBCC0B6C1 /* [CP] Check Pods Manifest.lock */,
 				8A702F90212A3BD3004039F7 /* Sources */,
 				8A702F91212A3BD3004039F7 /* Frameworks */,
 				8A702F92212A3BD3004039F7 /* Resources */,
-				8D362FBD9C4404F36E8734DF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -345,44 +336,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		04E184A9F0C6982EBCC0B6C1 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-iOS-Depth-Sampler-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8D362FBD9C4404F36E8734DF /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOS-Depth-Sampler/Pods-iOS-Depth-Sampler-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOS-Depth-Sampler/Pods-iOS-Depth-Sampler-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOS-Depth-Sampler/Pods-iOS-Depth-Sampler-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		8A702F90212A3BD3004039F7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -392,6 +345,7 @@
 				8AB7602B213631AD0051C3D1 /* PassThrough.metal in Sources */,
 				8A7F88052148199000170436 /* ARKitDepthViewController.swift in Sources */,
 				8AAF371421480D32006A551B /* RootViewController.swift in Sources */,
+				FCDCE67523760F9A0049E375 /* AssetsPickerGridController.swift in Sources */,
 				8A9A09DA214BA92E00432B1A /* PointCloud.swift in Sources */,
 				8AAF371C21481369006A551B /* DepthFromCameraRollViewController.swift in Sources */,
 				8A171F13214905D400121E80 /* CVPixelBuffer+CIImage.swift in Sources */,
@@ -402,6 +356,7 @@
 				8A7F8807214819FF00170436 /* TrackingState+Description.swift in Sources */,
 				8A603D8A2149460E00F848A4 /* PhotosUtils.swift in Sources */,
 				8A171F0B2148FE4100121E80 /* RealtimeDepthViewController.swift in Sources */,
+				FCDCE67723760FAC0049E375 /* CheckMarkView.swift in Sources */,
 				8AAF371321480D32006A551B /* RootViewCell.swift in Sources */,
 				8A603D8C2149590F00F848A4 /* UIAlertController+Utils.swift in Sources */,
 				8AAF371D2148136A006A551B /* CGImageSource+Depth.swift in Sources */,
@@ -411,6 +366,7 @@
 				8A603D87214945A900F848A4 /* PortraitMatteViewController.swift in Sources */,
 				8A702FAF212A3CDE004039F7 /* AVCaptureDevice+Extension.swift in Sources */,
 				8A702FAD212A3CDE004039F7 /* VideoCameraType.swift in Sources */,
+				FCDCE67423760F9A0049E375 /* AssetsPickerController.swift in Sources */,
 				8AFD6519214B0CC80085F997 /* CIImage+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -563,19 +519,18 @@
 		};
 		8A702FA7212A3BD5004039F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DDC3399A5A9E8877FB64BCD8 /* Pods-iOS-Depth-Sampler.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9Z86A4AWDE;
+				DEVELOPMENT_TEAM = G24B75E449;
 				INFOPLIST_FILE = "iOS-Depth-Sampler/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.shu223.iOS-Depth-Sampler";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.shu224.iOS-Depth-Sampler";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOS-Depth-Sampler/iOS-Depth-Sampler-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -586,19 +541,18 @@
 		};
 		8A702FA8212A3BD5004039F7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8FA83CA5E0F8F1F5F2E5DF63 /* Pods-iOS-Depth-Sampler.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9Z86A4AWDE;
+				DEVELOPMENT_TEAM = G24B75E449;
 				INFOPLIST_FILE = "iOS-Depth-Sampler/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.shu223.iOS-Depth-Sampler";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.shu224.iOS-Depth-Sampler";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOS-Depth-Sampler/iOS-Depth-Sampler-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

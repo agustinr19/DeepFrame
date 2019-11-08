@@ -7,7 +7,6 @@
 
 import UIKit
 import Photos
-import SwiftAssetsPickerController
 
 class PortraitMatteViewController: UIViewController {
 

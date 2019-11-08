@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import CheckMarkView
 
 class AssetsPickerGridController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 	

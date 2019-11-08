@@ -3,6 +3,7 @@ platform :ios, '11.0'
 target 'iOS-Depth-Sampler' do
   use_frameworks!
 
+  pod 'CheckMarkView'
   pod 'SwiftAssetsPickerController', :git => 'https://github.com/shu223/SwiftAssetsPickerController', :branch => 'temp/depth_swift5'
   pod 'Vivid'
 
