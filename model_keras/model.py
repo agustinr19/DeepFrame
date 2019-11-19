@@ -9,30 +9,47 @@ from keras import losses
 class DenseSLAMNet(object):
     def __init__(self, frame_size):
 
-        a = Input(shape=input_size)
+        a = Input(shape=frame_size)
 
         # encoding portion
-        b = Conv2D(18, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(a)
-        c = MaxPooling2D(pool_size=(2, 2))(b)
-        d = Conv2D(36, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(c)
-        e = MaxPooling2D(pool_size=(2, 2))(d)
-        f = Conv2D(72, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(e)
-        g = MaxPooling2D(pool_size=(2, 2))(f)
+        b = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(a)
+        c = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(b)
+        d = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(c)
+        e = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), activation='relu', padding='same')(d)
+        f = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(e)
+        g = Conv2D(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(f)
+        h = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(g)
+        i = Conv2D(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(h)
+        j = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(i)
+        k = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(j)
+        l = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(k)
+        m = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(l)
+        n = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(m)
+        o = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(n)
 
         # decoding portion
-        h = Conv2D(36, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(g)
-        i = UpSampling2D(size=(2, 2))(h)
-        j = Conv2D(18+num_bones, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(i)
-        k = UpSampling2D(size=(2, 2))(j)
-        l = Conv2D(num_bones, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(k)
-        m = UpSampling2D(size=(2, 2))(l)
+        p = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(o)
+        q = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(p)
+        r = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(q)
+        s = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(r)
+        t = Conv2DTranspose(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(s)
+        u = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(t)
+        v = Conv2DTranspose(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(u)
+        w = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(v)
+        x = Conv2DTranspose(64, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(w)
+        y = Conv2D(64, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(x)
+        z = Conv2DTranspose(32, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(y)
+        aa = Conv2D(32, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(z)
+        ab = Conv2DTranspose(16, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(aa)
+        ac = Conv2D(16, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(ab)
 
         # compiles model & optimizer
-        self.model = Model(inputs=a, outputs=m)
+        self.model = Model(inputs=a, outputs=ac)
         opt = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
         self.model.compile(loss=losses.mean_squared_error, optimizer=opt)
 
         self.print()
+        self.load()
 
     def save(self, weights_path="weights.h5"):
         self.model.save_weights(weights_path)
@@ -57,5 +74,6 @@ class DenseSLAMNet(object):
             epochs=epochs, 
             validation_data=(x_test, y_test),
             shuffle=True)
+        self.save()
 
 
