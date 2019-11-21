@@ -15,20 +15,7 @@ class DenseSLAMNet(object):
         a = Input(shape=frame_size, batch_shape=(planned_batch_size, frame_size[0], frame_size[1], frame_size[2]))
 
         # encoding portion
-        b = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(a)
-        c = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(b)
-        d = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), activation='relu', padding='same')(c)
-        e = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(d)
-        f = Conv2D(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(e)
-        g = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(f)
-        h = Conv2D(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(g)
-        i = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(h)
-        j = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(i)
-        k = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(j)
-        l = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(k)
-        m = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(l)
-        n = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(m)
-        o = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(n)
+        _, c, _, e, _, g, _, i, _, k, _, m, _, o = encoding_layers(a)
 
         # decoding portion
         p = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(o)
@@ -98,20 +85,7 @@ class CNNSingle(object):
         a = Input(shape=frame_size)
 
         # encoding portion
-        b = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(a)
-        c = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(b)
-        d = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), activation='relu', padding='same')(c)
-        e = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(d)
-        f = Conv2D(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(e)
-        g = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(f)
-        h = Conv2D(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(g)
-        i = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(h)
-        j = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(i)
-        k = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(j)
-        l = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(k)
-        m = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(l)
-        n = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(m)
-        o = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(n)
+        _, c, _, e, _, g, _, i, _, k, _, m, _, o = encoding_layers(a)
 
         # decoding portion
         p = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(o)
@@ -173,20 +147,7 @@ class CNNStack(object):
         a = Input(shape=stack_size)
 
         # encoding portion
-        b = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(a)
-        c = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(b)
-        d = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), activation='relu', padding='same')(c)
-        e = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(d)
-        f = Conv2D(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(e)
-        g = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(f)
-        h = Conv2D(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(g)
-        i = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(h)
-        j = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(i)
-        k = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(j)
-        l = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(k)
-        m = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(l)
-        n = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(m)
-        o = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(n)
+        _, c, _, e, _, g, _, i, _, k, _, m, _, o = encoding_layers(a)
 
         # decoding portion
         p = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(o)
@@ -239,4 +200,26 @@ class CNNStack(object):
             validation_data=(x_test, y_test),
             shuffle=True)
         self.save()
+
+
+
+# helper functions
+
+def encoding_layers(input_layer):
+    b = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(input_layer)
+    c = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(b)
+    d = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), activation='relu', padding='same')(c)
+    e = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), activation='relu', padding='same')(d)
+    f = Conv2D(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(e)
+    g = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(f)
+    h = Conv2D(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(g)
+    i = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(h)
+    j = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(i)
+    k = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(j)
+    l = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(k)
+    m = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(l)
+    n = Conv2D(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(m)
+    o = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(n)
+    return [b, c, d, e, f, g, h, i, j, k, l, m, n, o]
+
 
