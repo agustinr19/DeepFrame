@@ -203,8 +203,9 @@ class CNNStack(object):
 
 
 
-# helper functions
+## helper functions
 
+# builds encoding layers for all network architectures
 def encoding_layers(input_layer):
     b = Conv2D(32, kernel_size=(7, 7), strides=(2, 2), activation='relu', padding='same')(input_layer)
     c = Conv2D(32, kernel_size=(7, 7), strides=(1, 1), activation='relu', padding='same')(b)
