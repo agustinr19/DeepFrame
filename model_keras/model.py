@@ -10,7 +10,7 @@ import keras.backend as K
 # emulates DenseSLAMNet from section 5.6 in https://arxiv.org/pdf/1805.06558.pdf
 # must be trained with unshuffled, time-sequenced frames with minibatch size of 1
 # does not 
-class DenseSLAMNet(object):
+class DenseSLAMNetSequential(object):
     def __init__(self, frame_size, planned_batch_size=1):
         a = Input(shape=frame_size, batch_shape=(planned_batch_size, frame_size[0], frame_size[1], frame_size[2]))
 

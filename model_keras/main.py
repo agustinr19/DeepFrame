@@ -11,11 +11,13 @@ def test_depth_estimation():
     x_test = test_samples[:, :, :, :, 0]
     y_test = np.repeat(test_samples[:, :, :, 0:2, 1], axis=3, repeats=8)
 
-    # network_a = DenseSLAMNet(frame_size=(256, 256, 3))
-    network_b = CNNSingle(frame_size=data_loader.frame_size())
-    # network_c = CNNStack(frame_size=(256, 256, 3))
+    # network_a = DenseSLAMNetSequential(frame_size=(256, 256, 3))
 
-    network_b.train(x_train, x_test, y_train, y_test, epochs=10)
+    # network_b = CNNSingle(frame_size=data_loader.frame_size())
+    # network_b.train(x_train, x_test, y_train, y_test, epochs=10)
+
+    # network_c = CNNStack(frame_size=(256, 256, 3))
+    # network_c.train(x_train, x_test, y_train, y_test, epochs=10)    
 
 if __name__ == "__main__":
     test_depth_estimation()
