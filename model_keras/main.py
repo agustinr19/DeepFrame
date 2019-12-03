@@ -27,6 +27,7 @@ def train_depth_estimation():
         print("Training set #"+str(n)+" of "+str(x_train.shape[0])+"...")
         network_a = DenseSLAMNetSequential(frame_size=adjusted_frame_size)
         network_a.train(x_train[n], x_test[0], y_train[n], y_test[0], epochs=1)
+        del network_a
 
     # testing
     prediction = network_a.run(x_train[0])
