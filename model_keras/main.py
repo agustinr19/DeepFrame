@@ -24,7 +24,7 @@ def train_depth_estimation():
     y_test = np.expand_dims(np.pad(test_samples[1], ((0, 0), (0, 0), (0, diff_x), (0, diff_y)), 'constant', constant_values=(0, 0)), axis=-1)
 
     for n in range(x_train.shape[0]):
-        print("Training set #"+str(n)+"...")
+        print("Training set #"+str(n)+" of "+str(x_train.shape[0])+"...")
         network_a = DenseSLAMNetSequential(frame_size=adjusted_frame_size)
         network_a.train(x_train[n], x_test[0], y_train[n], y_test[0], epochs=1)
 
