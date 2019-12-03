@@ -1,1 +1,6 @@
 */.DS_Store
+*.h5
+**.h5
+*/test_data/
+*test_data/
+test_data/
