@@ -3,7 +3,7 @@ from data import *
 
 def train_depth_estimation():
 
-    data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/kitchen_small", assemble_into_stacks=True)
+    data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/kitchen_small", assemble_into_stacks=True, stack_length=5, training_split=0.9)
     train_samples = data_loader.training_set()
 
     # x_train = train_samples[:, :, :, :, 0]
