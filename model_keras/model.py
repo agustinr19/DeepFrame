@@ -52,7 +52,7 @@ class DenseSLAMNetSequential(object):
         opt = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
         self.model.compile(loss=losses.mean_squared_error, optimizer=opt)
 
-        self.print()
+        # self.print()
         self.load()
 
     def save(self, weights_path="dsnseq_weights.h5"):
