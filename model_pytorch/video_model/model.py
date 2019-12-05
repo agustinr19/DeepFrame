@@ -226,10 +226,10 @@ class CNN_Stack(nn.Module): #convolutional DispNet
         out_deconv5 = crop(out_deconv5,out_conv0)
         concat5 = torch.cat((out_deconv5, out_conv0), 1)
         out_deconv6 = self.deconv6(concat5)
-        print(out_deconv6.shape)
+        #print(out_deconv6.shape)
 
-        final = torch.sum(out_deconv6,axis=1)/out_deconv6.shape[1] #average in stack dimension
-        final = torch.sum(final,axis=1) #sum in 16 channel dimension
+        #final = torch.sum(out_deconv6,axis=1)/out_deconv6.shape[1] #average in stack dimension
+        final = torch.sum(out_deconv6,axis=1) #sum in 16 channel dimension
         final = final.view(final.shape[0],1,final.shape[1],final.shape[2])
         return final
 
