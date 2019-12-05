@@ -12,14 +12,14 @@ DATA_EXTENSION = '.png'
 def fetch_data_loc(directory):
     rgb = []
     depth = []
-    for directory, _, files in os.walk(directory):
+    for dirs, _, files in os.walk(directory):
         for file in files:
             if file.endswith(DATA_EXTENSION) and 'depth' not in file:
                 base = file[:-len(DATA_EXTENSION)]
                 depth.append(os.path.join(directory, base+'_depth'+DATA_EXTENSION))
                 rgb.append(os.path.join(directory, file))
 #                print("Finished loading "+file+"...")
-    return rgb,depth
+    return sorted(rgb),sorted(depth)
 
 def extract_data(path, rgb=True):
     img = np.array(Image.open(path))
@@ -27,11 +27,12 @@ def extract_data(path, rgb=True):
     return img
 
 class CustomDataLoader(object):
-    def __init__(self, path, train=False, ratio=0.8):
+    def __init__(self, path, train=False, ratio=0.8, stack = False, stack_size=10):
         self.path = path
         self.img_data, self.depth_data = fetch_data_loc(path)
         self.data_loc = list(zip(self.img_data,self.depth_data))
         self.to_tensor = transforms.ToTensor()
+        self.stack_size = stack_size
 
         if train:
             self.data_loc = self.data_loc[:int(len(self.data_loc)*ratio)]
@@ -45,9 +46,18 @@ class CustomDataLoader(object):
             self.data.append((rgb, depth))
 
     def __getitem__(self, index):
-        rgb, depth = self.data[index]
+        if stack:
+            data_stack = self.data[max(0,index-self.stack_size):index+1]
+            depth = self.data[index][1]
+            rgb = [x[0] for x in data_stack] #isolate first part
+            rgb = torch.stack(rgb)
+            print(rgb.shape)
+        else:
+            rgb, depth = self.data[index]
+            
         return rgb, depth
 
     def __len__(self):
         return len(self.data)
+
 

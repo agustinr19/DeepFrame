@@ -3,9 +3,12 @@ import argparse
 
 import torch
 
-BASE_DIR = '../../test_data/rgbd-scenes'
-data_choices = ['desk/desk_3']
+# BASE_DIR = '../../test_data/rgbd-scenes'
+# data_choices = ['desk','background','kitchen_small','meeting_small','table','table_small']
+BASE_DIR = '../../test_data/'
+data_choices = ['rgbd-scenes']
 tov_choices = ['train', 'val']
+cnn_choices = ['single', 'stack']
 
 parser = argparse.ArgumentParser()
 # dataset arguments
@@ -15,10 +18,14 @@ parser.add_argument('-ddir', '--data_dir', type=str, default=data_choices[0], ch
 					help='The dataset the model is trained/evaluated on')
 parser.add_argument('-testdir', '--test_dir', type=str, default='',
 					help='The dataset the model is tested on')
-parser.add_argument('-odir', '--output_dir', type=str, default='../../../cnn_single_output',
-					help='The directory to the output models')
-parser.add_argument('-task', '--task', type=str, default='train', choices=tov_choices,
+# parser.add_argument('-odir', '--output_dir', type=str, default='../../../cnn_single_output',
+# 					help='The directory to the output models')
+parser.add_argument('-type', '--task', type=str, default='train', choices=tov_choices,
 					help='Specify whether the task is either train or validate')
+parser.add_argument('-cnn', '--cnn_type', type=str, default='single', choices=cnn_choices,
+					help='Specify whether the architecture is either CNN-Single or CNN-Stack')
+parser.add_argument('-ss', '--stack_size', type=int, default=10,
+					help='If the architecture is CNN-Stack, the size of the stack')
 
 loss_choices = ['l1', 'l2','l1sum']
 # optimization metrics
@@ -50,7 +57,11 @@ def fetch_output_dir(args, sub_dir = None):
 		str(args.n_epochs), str(args.batch_size),
 		str(args.learning_rate)
 	])
-	output_dir = os.path.join(args.output_dir, model_dir)
+	if args.cnn_type == 'single'
+		output_start = '../../../cnn_single_output'
+	else:
+		output_start = '../../../cnn_stack_output'
+	output_dir = os.path.join(output_start, model_dir)
 	if sub_dir:
 		output_dir = os.path.join(output_dir, sub_dir)
 

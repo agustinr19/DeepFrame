@@ -26,16 +26,14 @@ fieldnames = ['mse', 'rmse', 'absrel', 'lg10', 'mae',
                 'data_time', 'gpu_time']
 
 def create_data_loaders():
+    cnn_stack = args.cnn_type == 'stack'
     val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
-    #print(val_dataset_dir)
-    val_dataset = CustomDataLoader(val_dataset_dir,train=False)
-    print(len(val_dataset))
+    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=arg.stack_size))
     val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
 
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
-    #print(train_dataset_dir)
-    train_dataset = CustomDataLoader(train_dataset_dir,train=True)
+    train_dataset = CustomDataLoader(train_dataset_dir,train=True, stack=cnn_stack, stack_size=args.stack_size)
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
 
     return (train, train_dataloader, val_dataloader)
@@ -98,7 +96,10 @@ def train_overview(train_dataloader, val_dataloader):
     print('Creating output dir {}'.format(output_dir))
 
     print("=> creating Model ...")
-    model = CNN_S()
+    if args.cnn_type == 'single':
+        model = CNN_Single()
+    else:
+        model = CNN_Stack()
 
     print("=> model created.")
     optimizer = torch.optim.Adam(model.parameters(), args.learning_rate, \
