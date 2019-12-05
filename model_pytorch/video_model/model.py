@@ -1,4 +1,4 @@
-import torch
+import torch, math
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -21,6 +21,10 @@ def deconv(in_ch, out_ch):
         nn.ConvTranspose2d(in_ch, out_ch, kernel_size=3, stride=2, padding=1, output_padding=1),
         nn.ReLU(inplace=True)
     )
+
+def crop(input, ref): #when skip connection tensor dims are one off
+    assert(input.size(2) >= ref.size(2) and input.size(3) >= ref.size(3))
+    return input[:, :, :ref.size(2), :ref.size(3)]
 
 #input tensor can be 1 x 3 x h x w or 10 x 3 x h x w 
 class CNN_S(nn.Module): #convolutional DispNet
@@ -86,21 +90,25 @@ class CNN_S(nn.Module): #convolutional DispNet
 
         #decoder       
         out_deconv0 = self.deconv0(out_conv6)
+        out_deconv0 = crop(out_deconv0,out_conv5)
         concat0 = torch.cat((out_deconv0,out_conv5), 1)
         out_upconv0 = self.upconv0(concat0)
         # print(out_upconv0.shape)
 
         out_deconv1 = self.deconv1(out_upconv0)
+        out_deconv1 = crop(out_deconv1,out_conv4)
         concat1 = torch.cat((out_deconv1, out_conv4), 1)
         out_upconv1 = self.upconv1(concat1)
         # print(out_upconv1.shape)
 
         out_deconv2 = self.deconv2(out_upconv1)
+        out_deconv2 = crop(out_deconv2,out_conv3)
         concat2 = torch.cat((out_deconv2, out_conv3), 1)
         out_upconv2 = self.upconv2(concat2)
         # print(out_upconv2.shape)
 
         out_deconv3 = self.deconv3(out_upconv2)
+        out_deconv3 = crop(out_deconv3,out_conv2)
         concat3 = torch.cat((out_deconv3, out_conv2), 1)
         out_upconv3 = self.upconv3(concat3)
         # print(out_upconv3.shape)
@@ -108,10 +116,12 @@ class CNN_S(nn.Module): #convolutional DispNet
         out_deconv4 = self.deconv4(out_upconv3)
         # print(out_deconv4.shape)
         
+        out_deconv4 = crop(out_deconv4,out_conv1)
         concat4 = torch.cat((out_deconv4, out_conv1), 1)
         out_deconv5 = self.deconv5(concat4)
         # print(out_deconv5.shape)
 
+        out_deconv5 = crop(out_deconv5,out_conv0)
         concat5 = torch.cat((out_deconv5, out_conv0), 1) 
         out_deconv6 = self.deconv6(concat5)
         # print(out_deconv6.shape)
