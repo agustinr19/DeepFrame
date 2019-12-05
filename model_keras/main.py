@@ -3,7 +3,7 @@ from data import *
 
 def train_depth_estimation():
 
-    data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/kitchen_small", assemble_into_stacks=True, stack_length=5, training_split=0.8)
+    data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/table", assemble_into_stacks=True, stack_length=5, training_split=0.8)
     train_samples = data_loader.training_set()
 
     # x_train = train_samples[:, :, :, :, 0]
@@ -30,7 +30,9 @@ def train_depth_estimation():
         del network_a
 
     # testing
-    prediction = network_a.run(x_train[0])
+    network_a = DenseSLAMNetSequential(frame_size=adjusted_frame_size)
+    input_im = np.expand_dims(x_train[0][0], axis=0)
+    prediction = network_a.run(input_im)[0, :, :, 0]
     img = Image.fromarray(np.uint8(np.clip(prediction*100.0, 0.0, 254.0)))
     img.save("test.png")
 
