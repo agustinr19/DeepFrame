@@ -26,7 +26,7 @@ def crop(input, ref): #when skip connection tensor dims are one off
     assert(input.size(2) >= ref.size(2) and input.size(3) >= ref.size(3))
     return input[:, :, :ref.size(2), :ref.size(3)]
 
-#input tensor can be 1 x 3 x h x w or 10 x 3 x h x w 
+#input tensor can be 1 x 3 x h x w or 10 x 3 x h x w
 class CNN_S(nn.Module): #convolutional DispNet
     def __init__(self,input_dim=3):
         super(CNN_S, self).__init__()
@@ -39,7 +39,7 @@ class CNN_S(nn.Module): #convolutional DispNet
         self.conv3 = conv_downsample(self.conv_planes[2], self.conv_planes[3])
         self.conv4 = conv_downsample(self.conv_planes[3], self.conv_planes[4])
         self.conv5 = conv_downsample(self.conv_planes[4], self.conv_planes[5])
-        
+
         self.conv6 = conv_downsample(self.conv_planes[5], self.conv_planes[6])
 
         #upsampling convolutions
@@ -88,7 +88,7 @@ class CNN_S(nn.Module): #convolutional DispNet
         out_conv6 = self.conv6(out_conv5)
         # print(out_conv6.shape)
 
-        #decoder       
+        #decoder
         out_deconv0 = self.deconv0(out_conv6)
         out_deconv0 = crop(out_deconv0,out_conv5)
         concat0 = torch.cat((out_deconv0,out_conv5), 1)
@@ -115,15 +115,27 @@ class CNN_S(nn.Module): #convolutional DispNet
 
         out_deconv4 = self.deconv4(out_upconv3)
         # print(out_deconv4.shape)
-        
+
         out_deconv4 = crop(out_deconv4,out_conv1)
         concat4 = torch.cat((out_deconv4, out_conv1), 1)
         out_deconv5 = self.deconv5(concat4)
         # print(out_deconv5.shape)
 
         out_deconv5 = crop(out_deconv5,out_conv0)
-        concat5 = torch.cat((out_deconv5, out_conv0), 1) 
+        concat5 = torch.cat((out_deconv5, out_conv0), 1)
         out_deconv6 = self.deconv6(concat5)
         # print(out_deconv6.shape)
 
-        return out_deconv6
+#        final = None
+#        for i in range(16):
+#            layer = out_deconv6[:,i,:,:]*(2**0)
+#            layer = layer.view(layer.shape[0],1,layer.shape[1],layer.shape[2])
+#            if final is None:
+#                final =  layer
+#            else:
+#                final += layer
+
+        final = torch.sum(out_deconv6,axis=1)
+        final = final.view(final.shape[0],1,final.shape[1],final.shape[2])
+        return final
+

@@ -26,22 +26,17 @@ fieldnames = ['mse', 'rmse', 'absrel', 'lg10', 'mae',
                 'data_time', 'gpu_time']
 
 def create_data_loaders():
-    train = args.task == 'train'
-
     val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
-    if args.test_dir:
-        val_dataset_dir = args.test_dir
 
-    print(val_dataset_dir)
+    #print(val_dataset_dir)
     val_dataset = CustomDataLoader(val_dataset_dir,train=False)
+    print(len(val_dataset))
     val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
 
-    train_dataloader = None
-    if train:
-        train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
-        print(train_dataset_dir)
-        train_dataset = CustomDataLoader(train_dataset_dir,train=True)
-        train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
+    train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
+    #print(train_dataset_dir)
+    train_dataset = CustomDataLoader(train_dataset_dir,train=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
 
     return (train, train_dataloader, val_dataloader)
 
@@ -49,16 +44,16 @@ def create_train_output_dir():
     output_dir = utils.fetch_output_dir(args)
 
     if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
         os.mkdir(os.path.join(output_dir, 'checkpoints'))
-
+    print(output_dir)
     return output_dir
 
 def create_val_output_dir():
     output_dir = utils.fetch_output_dir(args, sub_dir='val')
 
     if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
         os.mkdir(os.path.join(output_dir, 'visualizations'))
 
     return output_dir
@@ -107,7 +102,7 @@ def train_overview(train_dataloader, val_dataloader):
 
     print("=> model created.")
     optimizer = torch.optim.Adam(model.parameters(), args.learning_rate, \
-        momentum=args.momentum, weight_decay=args.weight_decay)
+        betas=args.betas,amsgrad=False)
 
     model = model.cuda()
 
@@ -120,17 +115,30 @@ def train_overview(train_dataloader, val_dataloader):
         criterion = criteria.L1LossSum()
 
     for epoch in range(args.n_epochs):
-        utils.modify_learning_rate(optimizer, epoch, args.learning_rate)
         train(train_dataloader, model, criterion, optimizer, epoch) # train for one epoch
         result = validate(val_dataloader, model) # evaluate on validation set
 
         utils.save_checkpoint({
             'args': args,
             'epoch': epoch,
-            'encoder': args.encoder,
             'model': model,
             'optimizer' : optimizer,
         }, epoch, output_dir)
+
+def process_output(pred):
+#    print(pred.shape)
+    new = None
+    for i in range(16):
+        layer = pred[:,i,:,:]*(2**i)
+#        print(layer.shape)
+        layer = layer.view(pred.shape[0],1,pred.shape[2],pred.shape[3])
+#        print(layer.shape)
+        if new is None:
+            new = layer
+        else:
+#            print(new.shape)
+            new += layer
+    return new
 
 def train(train_dataloader, model, criterion, optimizer, epoch):
     average_meter = AverageMeter()
@@ -145,6 +153,7 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
         # compute pred
         end = time.time()
         pred = model(input)
+#        pred = process_output(pred)
 
         loss = criterion(pred, target)
 
@@ -168,14 +177,14 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
                   'MAE={result.mae:.2f}({average.mae:.2f}) '
                   'Delta1={result.delta1:.3f}({average.delta1:.3f}) '
                   'REL={result.absrel:.3f}({average.absrel:.3f}) '
-                  'Lg10={result.lg10:.3f}({average.lg10:.3f}) '.format(
+                  'Loss{loss:.3f} '.format(
                   epoch, i+1, len(train_dataloader), data_time=data_time,
                   gpu_time=gpu_time, result=result, average=average_meter.average()))
 
     avg = average_meter.average()
     with open(output_train, 'a') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({'mse': avg.mse, 'rmse': avg.rmse, 'absrel': avg.absrel, 'lg10': avg.lg10,
+        writer.writerow({'mse': avg.mse, 'rmse': avg.rmse, 'absrel': avg.absrel,
             'mae': avg.mae, 'delta1': avg.delta1, 'delta2': avg.delta2, 'delta3': avg.delta3,
             'gpu_time': avg.gpu_time, 'data_time': avg.data_time})
 
@@ -251,10 +260,8 @@ def validate(val_dataloader, model, write_to_file=True, save_image=False, image_
 def main():
     train, train_dataloader, val_dataloader = create_data_loaders()
 
-    if train:
-        train_overview(train_dataloader, val_dataloader)
-    else:
-        validate_overview(val_dataloader)
+    train_overview(train_dataloader, val_dataloader)
+    validate_overview(val_dataloader)
 
 if __name__ == '__main__':
     main()

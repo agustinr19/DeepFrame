@@ -14,12 +14,11 @@ def fetch_data_loc(directory):
     depth = []
     for directory, _, files in os.walk(directory):
         for file in files:
-            if file.endswith(DATA_EXTENSION):
-                if 'depth' in file:
-                    depth.append(os.path.join(directory, file))
-                else:
-                    rgb.append(os.path.join(directory, file))
-                print("Finished loading "+file+"...")
+            if file.endswith(DATA_EXTENSION) and 'depth' not in file:
+                base = file[:-len(DATA_EXTENSION)]
+                depth.append(os.path.join(directory, base+'_depth'+DATA_EXTENSION))
+                rgb.append(os.path.join(directory, file))
+#                print("Finished loading "+file+"...")
     return rgb,depth
 
 def extract_data(path, rgb=True):
@@ -29,24 +28,24 @@ def extract_data(path, rgb=True):
 
 class CustomDataLoader(object):
     def __init__(self, path, train=False, ratio=0.8):
-        self.path = path      
+        self.path = path
         self.img_data, self.depth_data = fetch_data_loc(path)
         self.data_loc = list(zip(self.img_data,self.depth_data))
         self.to_tensor = transforms.ToTensor()
 
         if train:
-            self.data_loc = self.data_loc[:int(len(self.data)*ratio)]
-        else: 
-            self.data_loc = self.data_loc[int(len(self.data)*ratio):]
+            self.data_loc = self.data_loc[:int(len(self.data_loc)*ratio)]
+        else:
+            self.data_loc = self.data_loc[int(len(self.data_loc)*ratio):]
 
         self.data = []
         for rgb_path,depth_path in self.data_loc:
             rgb, depth = extract_data(rgb_path),extract_data(depth_path)
-            rgb, depth = self.to_tensor(rgb), self.to_tensor(depth) 
+            rgb, depth = self.to_tensor(rgb), self.to_tensor(depth)
             self.data.append((rgb, depth))
 
     def __getitem__(self, index):
-        rgb, depth = self.data[index]       
+        rgb, depth = self.data[index]
         return rgb, depth
 
     def __len__(self):

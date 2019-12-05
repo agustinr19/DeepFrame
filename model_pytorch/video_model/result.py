@@ -38,7 +38,7 @@ class Result(object):
         self.mse = float((torch.pow(abs_diff, 2)).mean())
         self.rmse = math.sqrt(self.mse)
         self.mae = float(abs_diff.mean())
-        self.lg10 = float((log10(output) - log10(target)).abs().mean())
+#        self.lg10 = float((log10(output) - log10(target)).abs().mean())
         self.absrel = float((abs_diff / target).mean())
 
         maxRatio = torch.max(output / target, target / output)
@@ -88,7 +88,7 @@ class AverageMeter(object):
         avg = Result()
         avg.update(
             self.sum_irmse / self.count, self.sum_imae / self.count,
-            self.sum_mse / self.count, self.sum_rmse / self.count, self.sum_mae / self.count, 
+            self.sum_mse / self.count, self.sum_rmse / self.count, self.sum_mae / self.count,
             self.sum_absrel / self.count, self.sum_lg10 / self.count,
             self.sum_delta1 / self.count, self.sum_delta2 / self.count, self.sum_delta3 / self.count,
             self.sum_gpu_time / self.count, self.sum_data_time / self.count)
