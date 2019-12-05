@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from PIL import Image
-import dataloaders.transforms as transforms
+import torchvision.transforms as transforms
 
 DATA_EXTENSION = '.png'
 def fetch_data_loc(directory):
@@ -31,19 +31,22 @@ class CustomDataLoader(object):
     def __init__(self, path, train=False, ratio=0.8):
         self.path = path      
         self.img_data, self.depth_data = fetch_data_loc(path)
-        self.data = list(zip(self.img_data,self.depth_data))
+        self.data_loc = list(zip(self.img_data,self.depth_data))
         self.to_tensor = transforms.ToTensor()
 
         if train:
-            self.data = self.data[:int(len(self.data)*ratio)]
+            self.data_loc = self.data_loc[:int(len(self.data)*ratio)]
         else: 
-            self.data = self.data[int(len(self.data)*ratio):]
+            self.data_loc = self.data_loc[int(len(self.data)*ratio):]
 
+        self.data = []
+        for rgb_path,depth_path in self.data_loc:
+            rgb, depth = extract_data(rgb_path),extract_data(depth_path)
+            rgb, depth = self.to_tensor(rgb), self.to_tensor(depth) 
+            self.data.append((rgb, depth))
 
     def __getitem__(self, index):
-        rgb, depth = self.data[index]
-        rgb, depth = extract_data(rgb), extract_data(depth)    
-        rgb, depth = self.to_tensor(rgb), self.to_tensor(depth)        
+        rgb, depth = self.data[index]       
         return rgb, depth
 
     def __len__(self):
