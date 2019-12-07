@@ -29,7 +29,7 @@ def create_data_loaders():
     cnn_stack = args.cnn_type == 'stack'
     val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
-    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=arg.stack_size))
+    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=args.stack_size)
     val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
 
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
@@ -180,7 +180,8 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
                   'REL={result.absrel:.3f}({average.absrel:.3f}) '
                   'Loss{loss:.3f} '.format(
                   epoch, i+1, len(train_dataloader), data_time=data_time,
-                  gpu_time=gpu_time, result=result, average=average_meter.average()))
+                  gpu_time=gpu_time, result=result, average=average_meter.average(),
+                  loss = loss))
 
     avg = average_meter.average()
     with open(output_train, 'a') as csvfile:

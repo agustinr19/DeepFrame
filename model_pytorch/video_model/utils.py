@@ -3,10 +3,10 @@ import argparse
 
 import torch
 
-# BASE_DIR = '../../test_data/rgbd-scenes'
-# data_choices = ['desk','background','kitchen_small','meeting_small','table','table_small']
-BASE_DIR = '../../test_data/'
-data_choices = ['rgbd-scenes']
+BASE_DIR = '../../test_data/rgbd-scenes'
+data_choices = ['desk','background','kitchen_small','meeting_small','table','table_small']
+#BASE_DIR = '../../test_data/'
+#data_choices = ['rgbd-scenes']
 tov_choices = ['train', 'val']
 cnn_choices = ['single', 'stack']
 
@@ -49,24 +49,24 @@ parser.add_argument('-valfq', '--val_frequency', type=int, default=100,
 					help='The frequency with which to save validation images')
 
 def parse_args():
-	return parser.parse_args()
+    return parser.parse_args()
 
 def fetch_output_dir(args, sub_dir = None):
-	model_dir = '-'.join([
-		args.data_dir,
-		str(args.n_epochs), str(args.batch_size),
-		str(args.learning_rate)
-	])
-	if args.cnn_type == 'single'
-		output_start = '../../../cnn_single_output'
-	else:
-		output_start = '../../../cnn_stack_output'
-	output_dir = os.path.join(output_start, model_dir)
-	if sub_dir:
-		output_dir = os.path.join(output_dir, sub_dir)
-
-	return output_dir
+    model_dir = '-'.join([
+        args.data_dir,
+        str(args.n_epochs), str(args.batch_size),
+        str(args.learning_rate)
+        ])
+    if args.cnn_type == 'single':
+        output_start = '../../../cnn_single_output'
+    else:
+        output_start = '../../../cnn_stack_output'
+    output_dir = os.path.join(output_start, model_dir)
+    if sub_dir:
+        output_dir = os.path.join(output_dir, sub_dir)
+    return output_dir
 
 def save_checkpoint(state, epoch, output_dir):
-	filename = os.path.join(output_dir, 'checkpoints', 'epoch-{}.tar'.format(epoch))
-	torch.save(state, filename)
+    filename = os.path.join(output_dir, 'checkpoints', 'epoch-{}.tar'.format(epoch))
+    torch.save(state, filename)
+
