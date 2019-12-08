@@ -98,7 +98,7 @@ def train_overview(train_dataloader, val_dataloader):
 
     print("=> creating Model ...")
     if args.recurrent == 'true':
-        model = DenseSLAMNet()
+        model = DenseSLAMNet(timespan=args.stack_size)
     elif args.cnn_type == 'single':
         model = CNN_Single()
     else:
