@@ -97,7 +97,9 @@ def train_overview(train_dataloader, val_dataloader):
     print('Creating output dir {}'.format(output_dir))
 
     print("=> creating Model ...")
-    if args.cnn_type == 'single':
+    if args.recurrent == 'true':
+        model = DenseSLAMNet()
+    elif args.cnn_type == 'single':
         model = CNN_Single()
     else:
         model = CNN_Stack()
