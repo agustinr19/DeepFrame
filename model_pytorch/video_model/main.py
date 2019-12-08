@@ -26,16 +26,29 @@ fieldnames = ['mse', 'rmse', 'absrel', 'lg10', 'mae',
                 'data_time', 'gpu_time']
 
 def create_data_loaders():
+    rgbd_scenes = 'rgbd-scenes' in args.base_dir
     cnn_stack = args.cnn_type == 'stack'
     recurrent = args.recurrent == 'true'
     val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
-    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=args.stack_size, concat=recurrent)
-    val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
-
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
-    train_dataset = CustomDataLoader(train_dataset_dir,train=True, stack=cnn_stack, stack_size=args.stack_size, concat=recurrent)
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
+
+    if cnn_stack:
+        val_dataset = CNNStackDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes, 
+                        stack_size=args.stack_size, concat=recurrent)
+        val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, 
+                        num_workers=args.n_workers)
+
+        train_dataset = CNNStackDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes, 
+                        stack_size=args.stack_size, concat=recurrent)
+        train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=True, pin_memory=True,
+                        num_workers=args.n_workers)
+    else:    
+        val_dataset = CNNSingleDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes)
+        val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
+
+        train_dataset = CNNSingleDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes)
+        train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
 
     return (train, train_dataloader, val_dataloader)
 

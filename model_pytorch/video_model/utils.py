@@ -5,8 +5,10 @@ import torch
 
 BASE_DIR = '../../test_data/rgbd-scenes'
 data_choices = ['desk','background','kitchen_small','meeting_small','table','table_small']
-#BASE_DIR = '../../test_data/'
-#data_choices = ['rgbd-scenes']
+# BASE_DIR = '../../test_data/'
+# data_choices = ['rgbd-scenes']
+#BASE_DIR = '../../../Desktop/sparse_to_dense_data'
+#data_choices = ['nyudepthv2','kitti']
 tov_choices = ['train', 'val']
 cnn_choices = ['single', 'stack']
 
