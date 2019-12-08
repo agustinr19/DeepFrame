@@ -154,18 +154,12 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
         torch.cuda.synchronize()
         data_time = time.time() - end
 
-        print("TEST A: "+str(input.shape)+", "+str(target.shape))
-
         # compute pred
         end = time.time()
         pred = model(input)
 #        pred = process_output(pred)
 
-        print("TEST B")
-
         loss = criterion(pred, target)
-
-        print("TEST C")
 
         optimizer.zero_grad()
         loss.backward() # compute gradient and do SGD step
@@ -173,15 +167,11 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
         torch.cuda.synchronize()
         gpu_time = time.time() - end
 
-        print("TEST D")
-
         # measure accuracy and record loss
         result = Result()
         result.evaluate(pred.data, target.data)
         average_meter.update(result, gpu_time, data_time, input.size(0))
         end = time.time()
-
-        print("TEST E")
 
         if (i + 1) % args.print_freq == 0:
             print('Train Epoch: {0} [{1}/{2}]\t'
