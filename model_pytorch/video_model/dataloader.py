@@ -61,7 +61,7 @@ class CustomDataLoader(object):
         else:
             rgb, depth = self.data[index]
 
-        # print(rgb.shape)
+        print(rgb.shape)
         return rgb, depth
 
     def __len__(self):
