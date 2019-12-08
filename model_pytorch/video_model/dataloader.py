@@ -64,6 +64,8 @@ class CustomDataLoader(object):
         return rgb, depth
 
     def __len__(self):
+        print(len(self.data))
+        print(self.stack_size)
         return len(self.data)-self.stack_size
 
 
