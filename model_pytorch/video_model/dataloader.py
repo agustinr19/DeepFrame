@@ -49,7 +49,7 @@ class CustomDataLoader(object):
 
     def __getitem__(self, index):
         if self.stack:
-            data_stack = self.data[max(0,index-self.stack_size+1):index+1]
+            data_stack = self.data[index:self.stack_size+index]
             depth = self.data[index][1]
             rgb = [x[0] for x in data_stack] #isolate first part
 
@@ -61,10 +61,9 @@ class CustomDataLoader(object):
         else:
             rgb, depth = self.data[index]
 
-        print(rgb.shape)
         return rgb, depth
 
     def __len__(self):
-        return len(self.data)
+        return len(self.data)-self.stack_size
 
 
