@@ -55,8 +55,6 @@ class CustomDataLoader(object):
 
             if self.concat:
                 rgb = torch.cat(rgb)
-                if list(rgb.size())[0] < 3*self.stack_size: # omits samples without sufficient timespan
-                    return None
             else:
                 rgb = torch.stack(rgb)
                 rgb = torch.sum(rgb,axis=0)/len(data_stack)
@@ -67,6 +65,14 @@ class CustomDataLoader(object):
         return rgb, depth
 
     def __len__(self):
+        
+        if self.concat == True:
+            data_stack = self.data[max(0,index-self.stack_size+1):index+1]
+            rgb = [x[0] for x in data_stack] #isolate first part
+
+            if list(rgb.size())[0] < 3*self.stack_size: # omits samples without sufficient timespan
+                return len(self.data)-1
+
         return len(self.data)
 
 
