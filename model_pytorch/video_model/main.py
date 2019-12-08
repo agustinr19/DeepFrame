@@ -156,8 +156,11 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
 
         # compute pred
         end = time.time()
+        print("TEST A")
         pred = model(input)
 #        pred = process_output(pred)
+
+        print("TEST B")
 
         loss = criterion(pred, target)
 

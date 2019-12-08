@@ -55,7 +55,7 @@ class CustomDataLoader(object):
 
             if self.concat:
                 rgb = torch.cat(rgb)
-                if list(rgb.size())[1] < 3*self.stack_size: # omits samples without sufficient timespan
+                if list(rgb.size())[0] < 3*self.stack_size: # omits samples without sufficient timespan
                     rgb = None
                     depth = None
             else:
