@@ -27,13 +27,14 @@ def extract_data(path, rgb=True):
     return img
 
 class CustomDataLoader(object):
-    def __init__(self, path, train=False, ratio=0.8, stack = False, stack_size=10):
+    def __init__(self, path, train=False, ratio=0.8, stack=False, stack_size=10, concat=False):
         self.path = path
         self.img_data, self.depth_data = fetch_data_loc(path)
         self.data_loc = list(zip(self.img_data,self.depth_data))
         self.to_tensor = transforms.ToTensor()
         self.stack_size = stack_size
         self.stack = stack
+        self.concat = concat
 
         if train:
             self.data_loc = self.data_loc[:int(len(self.data_loc)*ratio)]
@@ -51,12 +52,16 @@ class CustomDataLoader(object):
             data_stack = self.data[max(0,index-self.stack_size+1):index+1]
             depth = self.data[index][1]
             rgb = [x[0] for x in data_stack] #isolate first part
-            rgb = torch.stack(rgb)
-            rgb = torch.sum(rgb,axis=0)/len(data_stack)
-#            print(rgb.shape)
+
+            if self.concat:
+                rgb = torch.cat(rgb)
+            else:
+                rgb = torch.stack(rgb)
+                rgb = torch.sum(rgb,axis=0)/len(data_stack)
         else:
             rgb, depth = self.data[index]
 
+        print(rgb.shape)
         return rgb, depth
 
     def __len__(self):

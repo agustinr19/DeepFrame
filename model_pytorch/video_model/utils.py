@@ -24,6 +24,8 @@ parser.add_argument('-type', '--task', type=str, default='train', choices=tov_ch
 					help='Specify whether the task is either train or validate')
 parser.add_argument('-cnn', '--cnn_type', type=str, default='single', choices=cnn_choices,
 					help='Specify whether the architecture is either CNN-Single or CNN-Stack')
+parser.add_argument('-r', '--recurrent', type=str, default='false', choices=['false', 'true'],
+					help='Specify whether the architecture is recurrent or not.')
 parser.add_argument('-ss', '--stack_size', type=int, default=10,
 					help='If the architecture is CNN-Stack, the size of the stack')
 

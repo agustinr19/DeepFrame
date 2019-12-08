@@ -27,13 +27,14 @@ fieldnames = ['mse', 'rmse', 'absrel', 'lg10', 'mae',
 
 def create_data_loaders():
     cnn_stack = args.cnn_type == 'stack'
+    recurrent = args.recurrent == 'true'
     val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
-    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=args.stack_size)
+    val_dataset = CustomDataLoader(val_dataset_dir,train=False, stack=cnn_stack, stack_size=args.stack_size, concat=recurrent)
     val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
 
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
-    train_dataset = CustomDataLoader(train_dataset_dir,train=True, stack=cnn_stack, stack_size=args.stack_size)
+    train_dataset = CustomDataLoader(train_dataset_dir,train=True, stack=cnn_stack, stack_size=args.stack_size, concat=recurrent)
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
 
     return (train, train_dataloader, val_dataloader)
