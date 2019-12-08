@@ -34,23 +34,23 @@ def create_data_loaders():
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
     if cnn_stack:
-        val_dataset = CNNStackDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes, 
+        val_dataset = CNNStackDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes,
                         stack_size=args.stack_size, concat=recurrent)
-        val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, 
+        val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True,
                         num_workers=args.n_workers)
 
-        train_dataset = CNNStackDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes, 
+        train_dataset = CNNStackDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes,
                         stack_size=args.stack_size, concat=recurrent)
         train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=True, pin_memory=True,
                         num_workers=args.n_workers)
-    else:    
+    else:
         val_dataset = CNNSingleDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes)
         val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
-
+        print(len(val_dataset))
         train_dataset = CNNSingleDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes)
         train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
-
-    return (train, train_dataloader, val_dataloader)
+        print(len(train_dataset))
+    return (train_dataloader, val_dataloader)
 
 def create_train_output_dir():
     output_dir = utils.fetch_output_dir(args)
@@ -276,7 +276,7 @@ def validate(val_dataloader, model, write_to_file=True, save_image=False, image_
     return avg
 
 def main():
-    train, train_dataloader, val_dataloader = create_data_loaders()
+    train_dataloader, val_dataloader = create_data_loaders()
 
     train_overview(train_dataloader, val_dataloader)
     validate_overview(val_dataloader)
