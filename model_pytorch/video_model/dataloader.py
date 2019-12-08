@@ -70,6 +70,7 @@ class CustomDataLoader(object):
             index = len(self.data)
             data_stack = self.data[max(0,index-self.stack_size+1):index+1]
             rgb = [x[0] for x in data_stack] #isolate first part
+            rgb = torch.cat(rgb)
 
             if list(rgb.size())[0] < 3*self.stack_size: # omits samples without sufficient timespan
                 return len(self.data)-1
