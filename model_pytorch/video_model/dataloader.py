@@ -65,8 +65,9 @@ class CustomDataLoader(object):
         return rgb, depth
 
     def __len__(self):
-        
+
         if self.concat == True:
+            index = len(self.data)
             data_stack = self.data[max(0,index-self.stack_size+1):index+1]
             rgb = [x[0] for x in data_stack] #isolate first part
 
