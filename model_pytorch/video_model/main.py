@@ -154,7 +154,7 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
         torch.cuda.synchronize()
         data_time = time.time() - end
 
-        print("TEST A")
+        print("TEST A: "+str(input.shape)+", "+str(target.shape))
 
         # compute pred
         end = time.time()
@@ -180,6 +180,8 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
         result.evaluate(pred.data, target.data)
         average_meter.update(result, gpu_time, data_time, input.size(0))
         end = time.time()
+
+        print("TEST E")
 
         if (i + 1) % args.print_freq == 0:
             print('Train Epoch: {0} [{1}/{2}]\t'
