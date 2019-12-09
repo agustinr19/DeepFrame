@@ -6,3 +6,5 @@
 test_data/
 *.pyc
 **.pyc
+*/data/
+*data/

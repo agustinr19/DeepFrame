@@ -3,14 +3,14 @@ import argparse
 
 import torch
 
-BASE_DIR = '../../test_data/rgbd-scenes'
-data_choices = ['desk','background','kitchen_small','meeting_small','table','table_small']
-# BASE_DIR = '../../test_data/'
+BASE_DIR = '../../data/rgbd-scenes'
+data_choices = ['rgbd-scenes', 'desk','background','kitchen_small','meeting_small','table','table_small']
+# BASE_DIR = '../../data/'
 # data_choices = ['rgbd-scenes']
 #BASE_DIR = '../../../Desktop/sparse_to_dense_data'
 #data_choices = ['nyudepthv2','kitti']
 tov_choices = ['train', 'val']
-cnn_choices = ['single', 'stack']
+cnn_choices = ['single', 'stack', 'recurrent']
 
 parser = argparse.ArgumentParser()
 # dataset arguments
@@ -33,13 +33,13 @@ parser.add_argument('-ss', '--stack_size', type=int, default=10,
 
 loss_choices = ['l1', 'l2','l1sum']
 # optimization metrics
-parser.add_argument('-bs', '--batch_size', type=int, default=10,
+parser.add_argument('-bs', '--batch_size', type=int, default=1,
 					help='The batch size per training batch')
 parser.add_argument('-nw', '--n_workers', type=int, default=20,
 					help='The number of workers for the data loader')
 parser.add_argument('-ne', '--n_epochs', type=int, default=8,
 					help='The number of epochs over the dataset')
-parser.add_argument('-lr', '--learning_rate', type=float, default=2e-4,
+parser.add_argument('-lr', '--learning_rate', type=float, default=1e-4,
 					help='The learning rate for the network')
 parser.add_argument('-b', '--betas', type=tuple, default=(0.9,0.999),
                                         help='The beta parameters for Adam optimizer')
@@ -63,6 +63,8 @@ def fetch_output_dir(args, sub_dir = None):
         ])
     if args.cnn_type == 'single':
         output_start = '../../../cnn_single_output'
+    elif args.recurrent:
+        output_start = '../../../cnn_recurrent_output'
     else:
         output_start = '../../../cnn_stack_output'
     output_dir = os.path.join(output_start, model_dir)

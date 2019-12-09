@@ -29,9 +29,12 @@ def create_data_loaders():
     rgbd_scenes = 'rgbd-scenes' in args.base_dir
     cnn_stack = args.cnn_type == 'stack'
     recurrent = args.recurrent == 'true'
-    val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
+
+    # train_dataset_dir = os.path.join(args.base_dir, args.data_dir, 'train')
+    # val_dataset_dir = os.path.join(args.base_dir, args.data_dir, 'val')
 
     train_dataset_dir = os.path.join(args.base_dir, args.data_dir)
+    val_dataset_dir = os.path.join(args.base_dir, args.data_dir)
 
     if cnn_stack:
         val_dataset = CNNStackDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes,
@@ -41,15 +44,16 @@ def create_data_loaders():
 
         train_dataset = CNNStackDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes,
                         stack_size=args.stack_size, concat=recurrent)
-        train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=True, pin_memory=True,
+        train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=False, pin_memory=True,
                         num_workers=args.n_workers)
     else:
-        val_dataset = CNNSingleDataLoader(val_dataset_dir, train=False, rgbd_scenes=rgbd_scenes)
-        val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
-        print(len(val_dataset))
-        train_dataset = CNNSingleDataLoader(train_dataset_dir, train=True, rgbd_scenes=rgbd_scenes)
-        train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=False, pin_memory=True, num_workers=args.n_workers)
-        print(len(train_dataset))
+        val_dataset = CNNSingleDataLoader(val_dataset_dir, train=False)
+        val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
+        train_dataset = CNNSingleDataLoader(train_dataset_dir, train=True)
+        train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=args.n_workers)
+
+    print("val dataloader {}".format(len(val_dataset)))
+    print("train dataloader {}".format(len(train_dataset)))
     return (train_dataloader, val_dataloader)
 
 def create_train_output_dir():
@@ -118,8 +122,7 @@ def train_overview(train_dataloader, val_dataloader):
         model = CNN_Stack()
 
     print("=> model created.")
-    optimizer = torch.optim.Adam(model.parameters(), args.learning_rate, \
-        betas=args.betas,amsgrad=False)
+    optimizer = torch.optim.Adam(model.parameters(), args.learning_rate)
 
     model = model.cuda()
 
@@ -162,7 +165,6 @@ def train(train_dataloader, model, criterion, optimizer, epoch):
     model.train() # switch to train mode
     end = time.time()
     for i, (input, target) in enumerate(train_dataloader):
-
         input, target = input.cuda(), target.cuda()
         torch.cuda.synchronize()
         data_time = time.time() - end

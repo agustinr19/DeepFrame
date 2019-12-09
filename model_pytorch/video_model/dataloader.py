@@ -19,11 +19,10 @@ def fetch_data_loc(directory,timespan=1): #default does not cutoff any imgs
         for file in files:
             if file.endswith(DATA_EXTENSION) and 'depth' not in file:
                 base = file[:-len(DATA_EXTENSION)]
-                dir_depth.append(os.path.join(dirs, base+'_depth'+DATA_EXTENSION))
+                dir_depth.append(os.path.join(dirs, base +'_depth' + DATA_EXTENSION))
                 dir_files.append(os.path.join(dirs,file))
-#                print("Finished loading "+file+"...")
+
         if len(dir_files) > 0:
-#            print(len(dir_files),dirs)
             offset = len(dir_files) % timespan
             if offset > 0:
                 dir_files = dir_files[:-offset]
@@ -31,12 +30,11 @@ def fetch_data_loc(directory,timespan=1): #default does not cutoff any imgs
             assert len(dir_files) % timespan == 0
             rgb += dir_files
             depth += dir_depth
-#        print(len(rgb))
-    return sorted(rgb),sorted(depth)
+
+    return sorted(rgb), sorted(depth)
 
 def extract_data(path, rgbd=True, rgb_img=True):
     if rgbd: # png -> rgbd_scenes dataset
-        print(path)
         img = np.array(Image.open(path))
         img = transforms.ToPILImage()(img)
     else: # h5 -> nyuv2 dataset
@@ -53,14 +51,17 @@ class CNNSingleDataLoader(object): #cnn single, cnn stack
         self.rgbd_scenes = rgbd_scenes
         self.path = path
         self.ratio = ratio
-        self.to_tensor = transforms.ToTensor()
+        self.transform = transforms.Compose([
+            transforms.Resize((192, 256)),
+            transforms.ToTensor()
+        ])
 
         if not rgbd_scenes:
             if train:
                 self.path+='/train'
             else:
                 self.path+='/val'
-#        print(self.path,self.rgbd_scenes)
+
         self.img_data, self.depth_data = fetch_data_loc(path)
         self.data_loc = list(zip(self.img_data,self.depth_data))
 
@@ -77,7 +78,7 @@ class CNNSingleDataLoader(object): #cnn single, cnn stack
         for rgb_path,depth_path in self.data_loc:
             rgb = extract_data(rgb_path,rgbd=self.rgbd_scenes,rgb_img=True)
             depth = extract_data(depth_path,rgbd=self.rgbd_scenes,rgb_img=False)
-            rgb, depth = self.to_tensor(rgb), self.to_tensor(depth)
+            rgb, depth = self.transform(rgb), self.transform(depth)
             self.data.append((rgb, depth))
 
     def __getitem__(self, index):
@@ -92,7 +93,10 @@ class CNNStackDataLoader(object): #cnn single, cnn stack
         self.ratio = ratio
         self.rgbd_scenes = rgbd_scenes
         self.path = path
-        self.to_tensor = transforms.ToTensor()
+        self.transform = transforms.Compose([
+            transforms.Resize((192, 256)),
+            transforms.ToTensor()
+        ])
         self.stack_size = stack_size
         self.concat = concat
 
@@ -119,10 +123,13 @@ class CNNStackDataLoader(object): #cnn single, cnn stack
         for rgb_path,depth_path in self.data_loc:
             rgb = extract_data(rgb_path,rgbd=self.rgbd_scenes,rgb_img=True)
             depth = extract_data(depth_path,rgbd=self.rgbd_scenes,rgb_img=False)
-            rgb, depth = self.to_tensor(rgb), self.to_tensor(depth)
+            rgb, depth = self.transform(rgb), self.transform(depth)
+
             self.data.append((rgb, depth))
 
     def __getitem__(self, index):
+        # print("getting item")
+        # print("stack size {}".format(self.stack_size))
         data_stack = self.data[index:self.stack_size+index]
         depth = self.data[index][1]
         rgb = [x[0] for x in data_stack] #isolate first part

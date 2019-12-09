@@ -28,8 +28,10 @@ def save_heatmap(img_dir, img_name):
 	_save_heatmap(img_name, np_img)
 
 def save_visualization(output_dir, index, network_input, network_output, network_target):
-	network_output = network_output.squeeze(0)
-	network_target = network_target.squeeze(0)
+	network_output = network_output.squeeze(1)
+	network_target = network_target.squeeze(1)
+	# network_output = network_output.squeeze(0)
+	# network_target = network_target.squeeze(0)
 	vis_dir = os.path.join(output_dir, 'visualizations')
 
 	batch_size = len(network_input)

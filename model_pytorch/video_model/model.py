@@ -2,6 +2,8 @@ import torch, math
 import torch.nn as nn
 import torch.nn.functional as F
 
+from convlstm import ConvLSTM
+
 def conv_downsample(in_ch, out_ch, kernel_size=3):
     return nn.Sequential(
         nn.Conv2d(in_ch, out_ch, kernel_size=kernel_size, stride=2, padding=(kernel_size-1)//2),
@@ -250,10 +252,10 @@ class DenseSLAMNet(nn.Module): #recurrent variation of CNN-Single/Stack
 
         #upsampling convolutions
         self.upconv_planes = [512, 512, 256, 128, 64, 32, 16]
-        self.upconv0 = conv(self.upconv_planes[0]+ self.conv_planes[5], self.upconv_planes[0])
-        self.upconv1 = conv(self.upconv_planes[1]+ self.conv_planes[4], self.upconv_planes[1])
-        self.upconv2 = conv(self.upconv_planes[2]+ self.conv_planes[3], self.upconv_planes[2])
-        self.upconv3 = conv(self.upconv_planes[3]+ self.conv_planes[2], self.upconv_planes[3])
+        self.upconv0 = conv(self.upconv_planes[0] + self.conv_planes[5], self.upconv_planes[0])
+        self.upconv1 = conv(self.upconv_planes[1] + self.conv_planes[4], self.upconv_planes[1])
+        self.upconv2 = conv(self.upconv_planes[2] + self.conv_planes[3], self.upconv_planes[2])
+        self.upconv3 = conv(self.upconv_planes[3] + self.conv_planes[2], self.upconv_planes[3])
 
         #deconvolutions
         self.deconv0 = deconv(self.conv_planes[5], self.upconv_planes[0])
@@ -261,6 +263,13 @@ class DenseSLAMNet(nn.Module): #recurrent variation of CNN-Single/Stack
         self.deconv2 = deconv(self.upconv_planes[1], self.upconv_planes[2])
         self.deconv3 = deconv(self.upconv_planes[2], self.upconv_planes[3])
         self.deconv4 = deconv(self.upconv_planes[3], self.upconv_planes[4])
+
+        # self.recurrent1 = nn.LSTM(128 * 48 * 64, 128 * 48 * 64)
+        self.recurrent1 = ConvLSTM(
+            input_size = (48, 64), input_dim = 128, hidden_dim = [48, 64, 128], 
+            kernel_size = (3, 3), num_layers = 3, batch_first = True, return_all_layers = True
+        )
+
         self.deconv5 = deconv(self.upconv_planes[4] + self.conv_planes[1], self.upconv_planes[5])
         self.deconv6 = deconv(self.upconv_planes[5] + self.conv_planes[0], self.upconv_planes[6])
 
@@ -320,10 +329,15 @@ class DenseSLAMNet(nn.Module): #recurrent variation of CNN-Single/Stack
         # print(out_upconv3.shape)
 
         out_deconv4 = self.deconv4(out_upconv3)
-        # print(out_deconv4.shape)
 
         out_deconv4 = crop(out_deconv4,out_conv1)
         concat4 = torch.cat((out_deconv4, out_conv1), 1)
+
+        concat_unsqueezed = concat4.unsqueeze(0)
+        output, hidden = self.recurrent1(concat_unsqueezed)
+        print("OUTPUT SHAPE {}".format(output[-1].shape))
+        print("HIDDEN {}".format(hidden.shape))
+
         out_deconv5 = self.deconv5(concat4)
         # print(out_deconv5.shape)
 
