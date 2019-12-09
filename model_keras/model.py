@@ -1,6 +1,6 @@
 import os
 
-from keras.models import Model
+from keras.models import Model, Sequential
 from keras.layers import *
 from keras import optimizers
 from keras import losses
@@ -86,53 +86,56 @@ class DenseSLAMNetSequential(object):
 # UNFINISHED, UNTESTED
 class DenseSLAMNet(object):
     def __init__(self, frame_size, frame_timespan=10):
+        self.frame_size = frame_size
+
         a = Input(shape=(frame_timespan, frame_size[0], frame_size[1], frame_size[2]))
+        cell_models = self.cells()
+        b = TimeDistributed(cell_models[0])(a)
+        c = ConvLSTM2D(128, kernel_size=(3, 3), activation='relu', padding='same', return_sequences=True)(b)
 
-        # encoding portion
-        a_reshaped = Reshape((K.int_shape(a)[2], K.int_shape(a)[3], K.int_shape(a)[4]*K.int_shape(a)[1]))(a) # TODO: reshape (channels, timespan) into (channels*timespan)
-        _, c, _, e, _, g, _, i, _, k, _, m, _, o = encoding_layers(a_reshaped)
+        d = Conv2DTranspose(32, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')
+        e = TimeDistributed(d)(c)
+        f = ConvLSTM2D(64, kernel_size=(3, 3), activation='relu', padding='same', return_sequences=True)(e)
 
-        # decoding portion
-        p = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(o)
-        cc_a = concatenate([m, p], axis=3)
-        q = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(cc_a)
-        r = Conv2DTranspose(512, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(q)
-        cc_b = concatenate([k, r], axis=3)
-        s = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(cc_b)
-        t = Conv2DTranspose(256, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(s)
-        cc_c = concatenate([i, t], axis=3)
-        u = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(cc_c)
-        v = Conv2DTranspose(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(u)
-        cc_d = concatenate([g, v], axis=3)
-        w = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(cc_d)
-        x = Conv2DTranspose(64, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(w)
-        cc_e = concatenate([e, x], axis=3)
+        g = Conv2DTranspose(16, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')
+        h = TimeDistributed(g)(f)
+        i = ConvLSTM2D(16, kernel_size=(3, 3), activation='relu', padding='same')(h)
 
-        # TODO: reshape (channels*timespan) into (channels, timespan)
-        ya = Reshape((K.int_shape(ya)[1], K.int_shape(ya)[2], K.int_shape(ya)[3]))(ya)
-        yb = ConvLSTM2D(128, kernel_size=(3, 3), activation='relu', padding='same')(ya)
-        yc = Reshape((K.int_shape(cc_e)[1], K.int_shape(cc_e)[2], K.int_shape(cc_e)[3]))(yb)
-        z = Conv2DTranspose(32, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(yc)
-        cc_f = concatenate([c, z], axis=3)
-        aaa = Reshape((1, K.int_shape(cc_f)[1], K.int_shape(cc_f)[2], K.int_shape(cc_f)[3]))(cc_f)
-
-        # # TODO: reshape (channels*timespan) into (channels, timespan)
-        # aab = ConvLSTM2D(64, stateful=True, kernel_size=(3, 3), activation='relu', padding='same')(aaa)
-        # aac = Reshape((K.int_shape(cc_f)[1], K.int_shape(cc_f)[2], K.int_shape(cc_f)[3]))(aab)
-        # ab = Conv2DTranspose(16, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')(aac)
-        # aca = Reshape((1, K.int_shape(ab)[1], K.int_shape(ab)[2], K.int_shape(ab)[3]))(ab)
-
-        # # TODO: reshape (channels*timespan) into (channels, timespan)
-        # acb = ConvLSTM2D(16, stateful=True, kernel_size=(3, 3), activation='relu', padding='same')(aca)
-        # acc = Reshape((K.int_shape(ab)[1], K.int_shape(ab)[2], K.int_shape(ab)[3]))(acb)
+        j = Conv2DTranspose(1, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(i)
 
         # compiles model & optimizer
-        self.model = Model(inputs=a, outputs=aaa)
+        self.model = Model(inputs=a, outputs=j)
         opt = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
         self.model.compile(loss=losses.mean_squared_error, optimizer=opt)
 
         self.print()
         self.load()
+
+    def cells(self):
+        a = Input(shape=(self.frame_size[0], self.frame_size[1], self.frame_size[2]))
+
+        # encoding portion
+        padding = 'same'
+        skip_stride = (2, 2)
+        _, c, _, e, _, g, _, i, _, k, _, m, _, o = encoding_layers(a, padding=padding, mode='a')
+
+        # decoding portion
+        p = Conv2DTranspose(512, kernel_size=(3, 3), strides=skip_stride, activation='relu', padding=padding)(o)
+        cc_a = concatenate([m, p], axis=3)
+        q = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding=padding)(cc_a)
+        r = Conv2DTranspose(512, kernel_size=(3, 3), strides=skip_stride, activation='relu', padding=padding)(q)
+        cc_b = concatenate([k, r], axis=3)
+        s = Conv2D(512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding=padding)(cc_b)
+        t = Conv2DTranspose(256, kernel_size=(3, 3), strides=skip_stride, activation='relu', padding=padding)(s)
+        cc_c = concatenate([i, t], axis=3)
+        u = Conv2D(256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding=padding)(cc_c)
+        v = Conv2DTranspose(128, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding=padding)(u)
+        cc_d = concatenate([g, v], axis=3)
+        w = Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding=padding)(cc_d)
+        x = Conv2DTranspose(64, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding=padding)(w)
+        cc_e = concatenate([e, x], axis=3)
+
+        return [Model(inputs=a, outputs=cc_e)]
 
     def save(self, weights_path="dsn_weights.h5"):
         self.model.save_weights(weights_path)
