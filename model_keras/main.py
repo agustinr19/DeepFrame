@@ -8,7 +8,7 @@ def train_depth_estimation():
 
     # creates dataloaders
     timespan = 5
-    scene = '../data/rgbd-scenes/meeting'
+    scene = '../data/rgbd-scenes/meeting_small'
     train_dataloader = RGBDDataGenerator(scene, timespan=timespan, train=True)
     val_dataloader = RGBDDataGenerator(scene, timespan=timespan, train=False)
 
