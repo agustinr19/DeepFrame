@@ -21,6 +21,7 @@ def test_depth_estimation():
     network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=timespan)
     test_img = network_b.run(val_dataloader[0][0])
 
+    print(val_dataloader[0][0].shape)
     test_in = Image.fromarray(val_dataloader[0][0][-1, :, :, :])
     test_in.save("test_in.png")
 
