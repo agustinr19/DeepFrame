@@ -1,6 +1,7 @@
 from model import *
 from data import *
 from dataloader import *
+from PIL import Image
 
 def test_depth_estimation():
 
@@ -19,7 +20,8 @@ def test_depth_estimation():
 
     network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=timespan)
     test_img = network_b.run(val_dataloader[0][0])
-    print(test_img.shape)
+    test_im = Image.fromarray(test_img[0, :, :, 0])
+    test_im.save("test.png")
 
 if __name__ == "__main__":
     test_depth_estimation()
