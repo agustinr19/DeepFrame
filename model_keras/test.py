@@ -22,4 +22,4 @@ def test_depth_estimation():
     print(test_img.shape)
 
 if __name__ == "__main__":
-    train_depth_estimation()
+    test_depth_estimation()
