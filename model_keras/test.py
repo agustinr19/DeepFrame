@@ -18,8 +18,7 @@ def test_depth_estimation():
         break
 
     network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=timespan)
-    print(val_dataloader[0])
-    test_img = network_b.run(val_dataloader[0])
+    test_img = network_b.run(val_dataloader[0][0])
     print(test_img.shape)
 
 if __name__ == "__main__":
