@@ -26,7 +26,6 @@ def extract_data(path):
 class RGBDDataGenerator(keras.utils.Sequence):
 	def __init__(self, path, timespan=10, train=True):
 		self.data = fetch_data(path, timespan=timespan)
-		print(len(self.data))
 		self.timespan = timespan
 
 		self.n_timespans = len(self.data) // self.timespan
@@ -42,7 +41,7 @@ class RGBDDataGenerator(keras.utils.Sequence):
 		rgb_combined = [extract_data(rgb_path) for (rgb_path, _) in elements]
 		depth_combined = extract_data(self.data[index + self.timespan - 1][1])
 
-		return np.stack(rgb_combined, axis=0), depth_combined
+		return np.expand_dims(np.stack(rgb_combined, axis=0), axis=0), np.expand_dims(depth_combined, axis=0)
 
 	def __len__(self):
 		return len(self.data)-self.timespan
