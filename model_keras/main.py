@@ -55,7 +55,7 @@ def train_depth_estimation():
 
     # frame_size = (480, 640, 3)
     network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=timespan)
-    network_b.train_with_dataloaders(train_dataloader, val_dataloader)
+    network_b.train_with_dataloaders(train_dataloader, val_dataloader, epochs=4)
 
     # network_c = CNNSingle(frame_size=data_loader.frame_size())
     # network_c.train(x_train, x_test, y_train, y_test, epochs=10)
