@@ -43,7 +43,7 @@ class RGBDDataGenerator(keras.utils.Sequence):
 
         rgb_data = np.expand_dims(np.stack(rgb_combined, axis=0), axis=0)
         depth_data = np.expand_dims(np.expand_dims(depth_combined, axis=0), axis=-1)
-        print(rgb_data.shape)
+        print("RGB:"+str(rgb_data.shape))
         print(depth_data.shape)
         return rgb_data, depth_data
 

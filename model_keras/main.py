@@ -19,6 +19,7 @@ def train_depth_estimation():
         timespan = rgb.shape[0]
         frame_size = rgb.shape[1:]
         break
+    print("FS: "+str(frame_size))
 
     # loads data into samples
     # train_samples = data_loader.training_set()
