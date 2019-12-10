@@ -42,7 +42,7 @@ class RGBDDataGenerator(keras.utils.Sequence):
         depth_combined = extract_data(self.data[index + self.timespan - 1][1])
 
         rgb_data = np.expand_dims(np.stack(rgb_combined, axis=0), axis=0)
-        depth_data = np.expand_dims(depth_combined, axis=0)
+        depth_data = np.expand_dims(np.expand_dims(depth_combined, axis=0), axis=-1)
         print(rgb_data.shape)
         print(depth_data.shape)
         return np.transpose(rgb_data, (0, 1, 4, 2, 3)), np.transpose(depth_data, (0, 1, 4, 2, 3))

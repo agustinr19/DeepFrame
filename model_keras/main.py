@@ -7,9 +7,10 @@ def train_depth_estimation():
     # data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/table", assemble_into_stacks=True, stack_length=5, training_split=0.8)
 
     # creates dataloaders
+    timespan = 5
     scene = '../data/rgbd-scenes/background'
-    train_dataloader = RGBDDataGenerator(scene, train=True)
-    val_dataloader = RGBDDataGenerator(scene, train=False)
+    train_dataloader = RGBDDataGenerator(scene, timespan=timespan, train=True)
+    val_dataloader = RGBDDataGenerator(scene, timespan=timespan, train=False)
 
     # loads frame size & initial params
     timespan = 1
@@ -53,8 +54,8 @@ def train_depth_estimation():
     # img.save("test.png")
 
     # frame_size = (480, 640, 3)
-    network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=5)
-    network_b.train_with_dataloaders(train_dataloader, val_dataloader)
+    network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=timespan)
+    # network_b.train_with_dataloaders(train_dataloader, val_dataloader)
 
     # network_c = CNNSingle(frame_size=data_loader.frame_size())
     # network_c.train(x_train, x_test, y_train, y_test, epochs=10)
