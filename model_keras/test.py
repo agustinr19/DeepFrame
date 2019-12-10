@@ -24,10 +24,10 @@ def test_depth_estimation():
     test_in = Image.fromarray(np.uint8(val_dataloader[0][0][0, -1, :, :, :]))
     test_in.save("test_in.png")
 
-    test_ref = Image.fromarray(np.uint8(val_dataloader[0][1][0, :, :, 0]*255))
+    test_ref = Image.fromarray(np.uint8(val_dataloader[0][1][0, :, :, 0]*50))
     test_ref.save("test_ref.png")
 
-    test_out = Image.fromarray(np.uint8(test_img[0, :, :, 0]*255))
+    test_out = Image.fromarray(np.uint8(test_img[0, :, :, 0]*50))
     test_out.save("test_out.png")
 
 if __name__ == "__main__":
