@@ -88,9 +88,16 @@ class DenseSLAMNet(object):
     def __init__(self, frame_size, frame_timespan=10):
         self.frame_size = frame_size
 
+        adjusted_frame_size = list(self.frame_size[:])
+        adjustment_divisor = 128
+        adjusted_frame_size[0] = ((adjusted_frame_size[0]//adjustment_divisor)+1)*adjustment_divisor
+        adjusted_frame_size[1] = ((adjusted_frame_size[1]//adjustment_divisor)+1)*adjustment_divisor
+
         a = Input(shape=(frame_timespan, frame_size[0], frame_size[1], frame_size[2]))
-        cell_models = self.cells()
-        b = TimeDistributed(cell_models[0])(a)
+        a_padded = ZeroPadding3D(((adjusted_frame_size[0]-self.frame_size[0])//2, (adjusted_frame_size[1]-self.frame_size[1])//2, 0), data_format="channels_first")(a)
+
+        cell_models = self.cells(adjusted_frame_size)
+        b = TimeDistributed(cell_models[0])(a_padded)
         c = ConvLSTM2D(128, kernel_size=(3, 3), activation='relu', padding='same', return_sequences=True)(b)
 
         d = Conv2DTranspose(32, kernel_size=(3, 3), strides=(2, 2), activation='relu', padding='same')
@@ -102,17 +109,18 @@ class DenseSLAMNet(object):
         i = ConvLSTM2D(16, kernel_size=(3, 3), activation='relu', padding='same')(h)
 
         j = Conv2DTranspose(1, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same')(i)
+        j_cropped = Cropping2D(cropping=((adjusted_frame_size[0]-self.frame_size[0])//2, (adjusted_frame_size[1]-self.frame_size[1])//2), data_format="channels_last")(j)
 
         # compiles model & optimizer
-        self.model = Model(inputs=a, outputs=j)
+        self.model = Model(inputs=a, outputs=j_cropped)
         opt = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
         self.model.compile(loss=losses.mean_squared_error, optimizer=opt)
 
         self.print()
         self.load()
 
-    def cells(self):
-        a = Input(shape=(self.frame_size[0], self.frame_size[1], self.frame_size[2]))
+    def cells(self, frame_size):
+        a = Input(shape=(frame_size[0], frame_size[1], frame_size[2]))
 
         # encoding portion
         padding = 'same'
@@ -160,6 +168,10 @@ class DenseSLAMNet(object):
             epochs=epochs, 
             validation_data=(x_test, y_test),
             shuffle=True)
+        self.save()
+
+    def train_with_dataloaders(self, train_gen, test_gen, epochs=100):
+        self.model.fit_generator(train_gen, epochs=epochs, validation_data=test_gen, shuffle=True)
         self.save()
 
 

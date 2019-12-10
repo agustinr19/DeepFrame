@@ -5,12 +5,16 @@ from dataloader import *
 def train_depth_estimation():
 
     # data_loader = DataLoaderRGBD("../test_data/rgbd-scenes/table", assemble_into_stacks=True, stack_length=5, training_split=0.8)
-    data_loader = RGBDDataGenerator('../data/rgbd-scenes/background')
+
+    # creates dataloaders
+    scene = '../data/rgbd-scenes/background'
+    train_dataloader = RGBDDataGenerator(scene, train=True)
+    val_dataloader = RGBDDataGenerator(scene, train=False)
 
     # loads frame size & initial params
     timespan = 1
     frame_size = None
-    for (rgb, depth) in data_loader:
+    for (rgb, depth) in train_dataloader:
         timespan = rgb.shape[0]
         frame_size = rgb.shape[1:]
         break
@@ -48,7 +52,9 @@ def train_depth_estimation():
     # img = Image.fromarray(np.uint8(np.clip(prediction*100.0, 0.0, 254.0)))
     # img.save("test.png")
 
-    network_b = DenseSLAMNet(frame_size=adjusted_frame_size, frame_timespan=5)
+    # frame_size = (480, 640, 3)
+    network_b = DenseSLAMNet(frame_size=frame_size, frame_timespan=5)
+    network_b.train_with_dataloaders(train_dataloader, val_dataloader)
 
     # network_c = CNNSingle(frame_size=data_loader.frame_size())
     # network_c.train(x_train, x_test, y_train, y_test, epochs=10)
