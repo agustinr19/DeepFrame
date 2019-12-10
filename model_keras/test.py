@@ -12,7 +12,7 @@ def test_depth_estimation():
     # loads frame size & initial params
     timespan = 1
     frame_size = None
-    for (rgb, depth) in train_dataloader:
+    for (rgb, depth) in val_dataloader:
         timespan = rgb.shape[1]
         frame_size = rgb.shape[2:]
         break
